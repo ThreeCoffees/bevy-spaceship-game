@@ -9,10 +9,12 @@ mod camera;
 mod asteroids;
 mod asset_loader;
 mod collision_detection;
+mod despawn;
 
 use camera::CameraPlugin;
 use collision_detection::CollisionDetectionPlugin;
 use debug::DebugPlugin;
+use despawn::DespawnPlugin;
 use movement::MovementPlugin;
 use spaceship::SpaceshipPlugin;
 
@@ -33,5 +35,6 @@ fn main() {
         .add_plugins(CameraPlugin)
         .add_plugins(AsteroidPlugin)
         .add_plugins(CollisionDetectionPlugin)
+        .add_plugins(DespawnPlugin)
         .run();
 }
