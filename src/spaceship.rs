@@ -1,14 +1,16 @@
-use bevy::{prelude::*, scene};
+use bevy::prelude::*;
 
-use crate::{asset_loader::SceneAssets, movement::{Acceleration, MovingObjectBundle, Velocity}};
+use crate::{asset_loader::SceneAssets, collision_detection::Collider, movement::{Acceleration, MovingObjectBundle, Velocity}};
 
 const STARTING_TRANSLATION: Vec3 = Vec3::new(0.0, 0.0, -20.0);
 const SPACESHIP_SPEED: f32 = 25.0;
 const SPACESHIP_ROTATION_SPEED: f32 = 2.5;
-const SPACESHIT_ROLL_SPEED: f32 = 2.5;
+const SPACESHIP_ROLL_SPEED: f32 = 2.5;
+const SPACESHIP_COLLIDER_RADIUS: f32 = 7.5;
 
 const MISSILE_SPEED: f32 = 50.0;
 const MISSILE_FORWARD_SPAWN_OFFSET: f32 = 7.5;
+const MISSILE_COLIDER_RADIUS: f32 = 0.5;
 
 #[derive(Component, Debug)]
 pub struct Spaceship;
@@ -30,6 +32,7 @@ fn spawn_spaceship(mut commands: Commands, scene_assets: Res<SceneAssets>) {
             MovingObjectBundle {
                 velocity: Velocity::new(Vec3::ZERO), 
                 acceleration: Acceleration::new(Vec3::ZERO), 
+                collider: Collider::new(SPACESHIP_COLLIDER_RADIUS),
                 model: SceneBundle {
                     scene: scene_assets.spaceship.clone(),
                     transform: Transform::from_translation(STARTING_TRANSLATION),
@@ -63,9 +66,9 @@ fn spaceship_movement_controls(
     }
 
     if keyboard_input.pressed(KeyCode::Q) {
-        roll = -SPACESHIT_ROLL_SPEED * time.delta_seconds();
+        roll = -SPACESHIP_ROLL_SPEED * time.delta_seconds();
     } else if keyboard_input.pressed(KeyCode::F) {
-        roll = SPACESHIT_ROLL_SPEED * time.delta_seconds();
+        roll = SPACESHIP_ROLL_SPEED * time.delta_seconds();
     }
 
     // Rotate around Y-axis
@@ -88,6 +91,7 @@ fn spaceship_weapon_controls(
                 MovingObjectBundle {
                     velocity: Velocity::new(-transform.forward() * MISSILE_SPEED),
                     acceleration: Acceleration::new(Vec3::ZERO),
+                    collider: Collider::new(MISSILE_COLIDER_RADIUS),
                     model: SceneBundle {
                         scene: scene_assets.missiles.clone(),
                         transform: Transform::from_translation(
